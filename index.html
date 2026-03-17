@@ -4,20 +4,28 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Behind the Magic</title>
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+		<link rel="stylesheet" href="dist/theme/white-modified.css">
 
 		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<link rel="stylesheet" href="plugin/highlight/zenburn.css">
+
+		<!-- re-enable footer -->
+		<link rel="stylesheet" href="styles/bloomberg.css">
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+                <section data-markdown="slides.md"
+                    data-separator="^\r?\n===r?\n$"
+                    data-separator-vertical="^\r?\n------\r?\n$"
+                    data-separator-notes="^Note:"
+                    data-charset="iso-8859-15"
+                    data-transition="slide">
+                </section>
 			</div>
 		</div>
 
@@ -32,9 +40,15 @@
 			Reveal.initialize({
 				hash: true,
 
+				controlsLayout: 'edges',
+				center: false,
+				width: 1920,
+				height: 1080,
+
 				// Learn about plugins: https://revealjs.com/plugins/
 				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
 			});
 		</script>
 	</body>
+	<footer><img src='images/bloomberg-copyright-with-cc-license.svg'></footer>
 </html>

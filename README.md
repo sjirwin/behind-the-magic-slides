@@ -4,7 +4,7 @@ This repo contains the content and tools used to create slides for the conferenc
 
 The slide content is licensed under the terms and conditions contained in [LICENCE.md](LICENSE.md).
 
-<img src="CC-BY_icon.png" alt="Icon for CC-BY 4.0 Creative Commons Attribution 4.0 International license" width="100">
+<img src="CC-BY_icon.svg" alt="Icon for CC-BY 4.0 Creative Commons Attribution 4.0 International license" width="100">
 
 <p>&nbsp;
 

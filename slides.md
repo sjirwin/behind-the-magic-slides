@@ -1,5 +1,6 @@
-## Behind the Magic
-### Unlocking Python's Descriptor Protocol
+<!-- .slide: class="center" -->
+# Behind the Magic
+## Unlocking Python's Descriptor Protocol
 
 <center>
 <br/>Scott Irwin
@@ -8,9 +9,6 @@
      style="border: none; box-shadow: none; height: 100px"
      alt="Bloomberg Engineering logo"
 />
-<br/>
-<p>&nbsp;
-https://sjirwin.github.io/behind-the-magic-slides/
 </center>
 
 ------
@@ -18,22 +16,104 @@ https://sjirwin.github.io/behind-the-magic-slides/
 ## About Me
 
 - Bloomberg Engineering
-  - Joined in 2014 as Senior Engineer and Team Lead
-  - Python educator
+  - Joined in 2014 as Senior Engineer
+  - Roles: Individual Contributor, Team Lead, and Technical Trainer
   - Python Guild Leader since 2018
     - Former Co-chair
-
-===
-
-# What are Descriptors
-
-===
-
-# Why Write a Descriptor
+- Python educator
 
 ------
 
-## Slide Tile 1
+## Why This Talk
+
+- Curiosity!
+- Descriptors are everywhere
+
+===
+
+<!-- .slide: class="center" -->
+# Descriptors
+
+------
+
+## What is a descriptor
+
+- A **descriptor** is any object the implements the descriptor protocol
+- The **descriptor protocol** controls attribute access
+
+------
+
+## Descriptor Protocol
+
+- Enables objects that are attributes of other classes to customize their behavior when they are read or modified
+- Protocol methods
+  - `__get__`
+  - `__set__`
+  - `__delete__`
+
+------
+
+## Descriptor Types
+
+### Data Descriptors
+
+- Defines one or both of:
+  - `__set__`
+  - `__delete__`
+- Normally also defines `__get__`
+
+&nbsp;<br/>
+
+### Data Descriptors
+
+- Defines only `__get__`
+
+===
+
+<!-- .slide: class="center" -->
+# Attribute lookup
+## Basic view
+
+------
+
+## Lookup Order
+
+### Lookup order for object attribute (`obj.attr`):
+
+1. Data descriptors from the `type(obj)` and its bases
+1. Instance `__dict__` (i.e., `obj.__dict__['attr']`)
+1. Non-data descriptors from `type(obj)` and its bases, and other class attributes
+1. Raises `AttributeError`
+
+===
+
+<!-- .slide: class="center" -->
+# Live Demo
+
+===
+
+<!-- .slide: class="center" -->
+# Attribute lookup
+## Full View
+
+===
+
+<!-- .slide: class="center" -->
+# Common Uses
+
+===
+
+<!-- .slide: class="center" -->
+# Conclusion
+
+===
+
+<!-- .slide: class="center" -->
+# Supplemental
+
+------
+
+#### Slide Tile 1
 
 <div style="display: flex; gap: 20px;">
 
@@ -62,7 +142,7 @@ print(region)  # Region(-42, 2, 3)
 
 ------
 
-## Slide Tile 2
+#### Slide Tile 2
 
 <div style="display: flex; gap: 20px;">
 
@@ -113,7 +193,7 @@ region.height = -42  # ValueError: Value must be >= 0
 
 ------
 
-## Slide Tile 3
+#### Slide Tile 3
 
 <div style="display: flex; gap: 20px;">
 
@@ -173,7 +253,7 @@ class Temperature:
 
 ------
 
-## Slide Tile 4
+#### Slide Tile 4
 
 ```python
 # attribute.py
@@ -203,7 +283,7 @@ class ValidatedAttribute:
 
 ------
 
-## Slide Tile 5
+#### Slide Tile 5
 
 <div style="display: flex; gap: 20px;">
 
@@ -265,23 +345,3 @@ t.celsius = -300  # ValueError: Value must be >= -273.15
 ```
 
 </div>
-
-===
-
-# Attribute Lookup - Basic View
-
-===
-
-# Live Demo
-
-===
-
-# Attribute lookup - Full View
-
-===
-
-# Common and powerful uses of Descriptors
-
-===
-
-# Conclusion

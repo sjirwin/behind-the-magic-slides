@@ -1,14 +1,56 @@
+/*********************************************
+ * THEME OVERRIDES (white.css defaults)
+ *********************************************/
+:root {
+  --r-main-font-size: 54px;
+  --r-heading1-size: 3.7em;
+  --r-heading2-size: 2.0em;
+}
+
+.reveal blockquote {
+  width: 90%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.reveal pre {
+  font-size: 0.43em;
+}
+
+.reveal pre code {
+  max-height: 900px;
+  background-color: rgba(0, 0, 0, 0.95);
+}
+
+/*********************************************
+ * SLIDE LAYOUT
+ *********************************************/
+.reveal .slides section > h2:first-child {
+  margin-bottom: 0.5em;
+}
+
+/*********************************************
+ * FOOTER
+ *********************************************/
 body > footer {
   position: absolute;
+  left: 20px;
   right: 20px;
   bottom: 20px;
-  width: 25%;
   height: 8%;
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 10px;
 }
 
+body > footer > .footer-text {
+  flex: 1;
+  text-align: left;
+  font-family: Source Sans Pro, Helvetica, sans-serif;
+  font-size: 36px;
+}
+
 body > footer > img {
-  max-width: 95%;
+  max-width: 25%;
   max-height: 95%;
 }

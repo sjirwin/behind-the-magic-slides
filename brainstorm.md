@@ -196,6 +196,7 @@ print(obj.class_attr)     # "class attribute" (priority 3)
 
 ### Visual Summary
 
+```text
 Priority 1: Data descriptors (has `__get__` + `__set__`/`__delete__`)
             Examples: `@property`, `ValidatedAttribute`
             ↓
@@ -207,6 +208,7 @@ Priority 3: Non-data descriptors (has only `__get__`)
             Examples: methods, classmethod, staticmethod, plain values
             ↓
 Priority 4: `AttributeError`
+```
 
 ### Practical Implication
 
@@ -877,6 +879,7 @@ del obj.x  # Raises: AttributeError: Cannot delete x
 
 #### For `obj.attr` (getting)
 
+```text
 1. `obj.__getattribute__('attr')` is called
     ↓ (inside `__getattribute__`)
 2. Look for data descriptor in `type(obj).__mro__`
@@ -888,22 +891,27 @@ del obj.x  # Raises: AttributeError: Cannot delete x
 5. If nothing found, call `obj.__getattr__('attr')`
     ↓
 6. If `__getattr__` not defined or also fails, raise `AttributeError`
+```
 
 #### For `obj.attr = value` (setting)
 
+```text
 1. `obj.__setattr__('attr', value)` is called
     ↓ (inside `__setattr__`)
 2. Look for data descriptor in `type(obj).__mro__`
     ↓ (if found and has `__set__`, call `descriptor.__set__`)
 3. Otherwise, set `obj.__dict__['attr'] = value`
+```
 
 #### For `del obj.attr` (deleting)
 
+```text
 1. `obj.__delattr__('attr')` is called
     ↓ (inside `__delattr__`)
 2. Look for data descriptor in `type(obj).__mro__`
     ↓ (if found and has `__delete__`, call `descriptor.__delete__`)
 3. Otherwise, `del obj.__dict__['attr']`
+```
 
 ### How They All Interact
 

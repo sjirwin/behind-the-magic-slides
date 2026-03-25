@@ -16,6 +16,10 @@
   font-size: 0.43em;
 }
 
+.reveal code {
+  color: darkred;
+}
+
 .reveal pre code {
   max-height: 900px;
   background-color: rgba(0, 0, 0, 0.95);
@@ -26,6 +30,21 @@
  *********************************************/
 .reveal .slides section > h2:first-child {
   margin-bottom: 0.5em;
+  text-align: center;
+}
+.reveal .slides section > h2:first-child ~ h3 {
+  margin-bottom: 0.5em;
+  margin-left: 10%;
+  margin-right: 10%;
+  text-align: left;
+}
+
+.reveal .slides section > h2:first-child ~ ul,
+.reveal .slides section > h2:first-child ~ ol,
+.reveal .slides section > h2:first-child ~ dl {
+  display: block;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 /*********************************************

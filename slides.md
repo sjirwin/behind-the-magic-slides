@@ -1,6 +1,6 @@
 <!-- .slide: class="center" -->
 # Behind the Magic
-## Unlocking Python's Descriptor Protocol
+### Unlocking Python's Descriptor Protocol
 
 <center>
 <br/>Scott Irwin
@@ -64,7 +64,7 @@
 
 &nbsp;<br/>
 
-### Data Descriptors
+### Non-Data Descriptors
 
 - Defines only `__get__`
 

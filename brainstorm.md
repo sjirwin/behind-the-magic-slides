@@ -203,8 +203,7 @@ Priority 1: Data descriptors (has `__get__` + `__set__`/`__delete__`)
 Priority 2: Instance `__dict__`
             `obj.__dict__['attr']`
             ↓
-Priority 3: Non-data descriptors (has only `__get__`)
-            + Regular class attributes
+Priority 3: Non-data descriptors (has only `__get__`) + Regular class attributes
             Examples: methods, classmethod, staticmethod, plain values
             ↓
 Priority 4: `AttributeError`

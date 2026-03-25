@@ -16,8 +16,9 @@
   font-size: 0.43em;
 }
 
-.reveal code {
-  color: darkred;
+.reveal :not(pre) > code {
+  color: darkorchid;
+  font-size: 0.85em;
 }
 
 .reveal pre code {

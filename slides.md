@@ -38,7 +38,7 @@
 
 ## What is a descriptor
 
-- A **descriptor** is any object the implements the descriptor protocol
+- A **descriptor** is any object that implements the descriptor protocol
 - The **descriptor protocol** controls attribute access
 
 ------
@@ -55,35 +55,86 @@
 
 ## Descriptor Types
 
-### Data Descriptors
+<div style="display: flex; gap: 20px;">
+<div style="margin-left: 10%;">
+
+#### Non-Data Descriptors
+
+- Defines only `__get__`
+
+</div>
+
+---
+
+<div style="margin-right: 10%;">
+
+#### Data Descriptors
 
 - Defines one or both of:
   - `__set__`
   - `__delete__`
-- Normally also defines `__get__`
+- Also typically defines `__get__`
 
-&nbsp;<br/>
+</div>
+</div>
 
-### Non-Data Descriptors
+------
 
-- Defines only `__get__`
+## Descriptors Are Everywhere
+
+<div style="display: flex; gap: 20px;">
+<div style="margin-left: 10%;">
+
+#### Non-Data Descriptors
+
+-  Class methods
+- `@classmethod`
+- `@staticmethod`
+- Methods on built-in types
+  - E.g., `list.append`, `dict.items`
+- `super()`
+
+</div>
+
+---
+
+<div style="margin-right: 10%;">
+
+#### Data Descriptors
+
+- `@property`
+- `__slots__` attributes
+
+</div>
+</div>
 
 ===
 
 <!-- .slide: class="center" -->
-# Attribute lookup
-## Basic view
+# Attribute Lookup
+## Basic View
 
 ------
 
-## Lookup Order
+## Lookup Order - Simple View
 
-### Lookup order for object attribute (`obj.attr`):
+For `obj.attr`
 
-1. Data descriptors from the `type(obj)` and its bases
-1. Instance `__dict__` (i.e., `obj.__dict__['attr']`)
-1. Non-data descriptors from `type(obj)` and its bases, and other class attributes
-1. Raises `AttributeError`
+1. Data descriptors from `type(obj)` (class)
+1. `obj.__dict__['attr']` (instance `__dict__`)
+1. Non-data descriptors from `type(obj)`
+1. Raise `AttributeError`
+
+------
+
+## Lookup Order - Expanded View
+
+For `obj.attr`
+
+1. Data descriptors from `type(obj).__mro__` (class and its bases)
+1. `obj.__dict__['attr']` (instance `__dict__`)
+1. Non-data descriptors and class attributes from `type(obj).__mro__`
+1. Raise `AttributeError`
 
 ===
 
@@ -93,27 +144,372 @@
 ===
 
 <!-- .slide: class="center" -->
-# Attribute lookup
+# Attribute Lookup
 ## Full View
-
-===
-
-<!-- .slide: class="center" -->
-# Common Uses
-
-===
-
-<!-- .slide: class="center" -->
-# Conclusion
-
-===
-
-<!-- .slide: class="center" -->
-# Supplemental
 
 ------
 
-#### Slide Tile 1
+## Lookup Order - Get
+
+For `obj.attr`
+
+1. `obj.__getattribute__('attr')`
+<br/>&nbsp;&#8595; (inside `__getattribute__`)
+1. Data descriptor from `type(obj).__mro__`
+1. `obj.__dict__['attr']`
+1. Non-data descriptors and class attributes from `type(obj).__mro__`
+1. Call `obj.__getattr__('attr')`
+1. Raise `AttributeError` (`__getattr__` not defined or also fails)
+
+------
+
+## Lookup Order - Set
+
+For `obj.attr = value`
+
+1. `obj.__setattr__('attr', value)`
+<br/>&nbsp;&#8595; (inside `__setattr__`)
+1. Data descriptor from `type(obj).__mro__`
+1. `obj.__dict__['attr'] = value`
+
+------
+
+## Lookup Order - Del
+
+For `del obj.attr`
+
+1. `obj.__delattr__('attr')`
+<br/>&nbsp;&#8595; (inside `__delattr__`)
+1. Data descriptor from `type(obj).__mro__`
+1. `del obj.__dict__['attr']`
+
+------
+
+## Key Points
+
+- `__getattribute__`, `__setattr__`, `__delattr__`
+  - The "outer layer"
+  - Affect **all** attributes
+  - Orchestrate the lookup process, including calling the descriptor protocol
+- Descriptors are per-attribute so more targeted
+
+===
+
+<!-- .slide: class="center" -->
+# Writing Your Own Descriptors
+
+------
+
+## Some Uses For Descriptors
+
+- Data Validation
+- Lazy Evaluation & Caching
+- Type Validation
+- Logging / Debugging Attribute Access
+- Unit Conversion
+- Attribute Aliasing
+- ORM Field Definitions
+
+===
+
+<!-- .slide: class="center" -->
+# Wrapping Up
+
+------
+
+## How It All Connects
+
+<div style="font-size: 0.80em;">
+
+| Method                  | When Called                | Use Case                                    |
+|-------------------------|----------------------------|---------------------------------------------|
+| `__getattribute__`      | Every attribute access     | Logging, proxies, computed attributes       |
+| `__getattr__`           | When normal lookup fails   | Fallback values, lazy loading, delegation   |
+| `__setattr__`           | Every attribute assignment | Validation, type checking, observers        |
+| `__delattr__`           | Every attribute deletion   | Protection, cleanup hooks                   |
+| Descriptor `__get__`    | Via `__getattribute__`     | Lazy computation, validation, type checking |
+| Descriptor `__set__`    | Via `__setattr__`          | Validation, type checking, observers        |
+| Descriptor `__delete__` | Via `__delattr__`          | Cleanup, protection                         |
+
+</div>
+
+------
+
+## Summary
+
+Descriptors are everywhere and are essential to how Python works
+
+------
+
+<!-- .slide: class="center" -->
+## Questions?
+
+===
+
+<!-- .slide: class="center" -->
+# Appendices
+
+===
+
+<!-- .slide: class="center" -->
+# Basic Demo
+
+------
+
+#### Non-Data Descriptor
+
+<div style="display: flex; gap: 20px;">
+
+```python
+# descriptor.py
+
+class SqueakyDescriptor:
+
+    def __get__(self, obj, objtype=None):
+        print(f"Squeak! Get value from {obj=} of type {objtype=}")
+        if obj:
+            return getattr(obj, "_squeaky", "Default")
+        return getattr(objtype, "_squeaky", "Default")
+```
+
+---
+
+```python
+# demo.py
+
+from descriptor import SqueakyDescriptor
+
+
+class Demo:
+    a = SqueakyDescriptor()
+```
+
+</div>
+
+```python
+$ python3.14 -i demo.py
+>>> z = Demo()
+>>> z.__dict__
+{}
+>>> z.a
+Squeak! Get value from obj=<__main__.Demo object at 0x101c93380> of type objtype=<class '__main__.Demo'>
+'Default'
+>>> z.a = "hello"
+>>> z.__dict__
+{'a': 'hello'}
+>>> z.a
+'hello'
+```
+
+------
+
+#### Data Descriptor (1)
+
+<div style="display: flex; gap: 20px; font-size: 0.85em;">
+
+```python [1,11-13]
+# descriptor.py
+
+class SqueakyDescriptor:
+
+    def __get__(self, obj, objtype=None):
+        print(f"Squeak! Get value from {obj=} of type {objtype=}")
+        if obj:
+            return getattr(obj, "_squeaky", "Default")
+        return getattr(objtype, "_squeaky", "Default")
+  
+    def __set__(self, obj, value):
+        print(f"Squeak! Set {value=} on {obj=}")
+        setattr(obj, "_squeaky", value)
+
+    # def __delete__(self, obj): ...
+```
+
+---
+
+```python [1]
+# demo.py
+
+from descriptor import SqueakyDescriptor
+
+
+class Demo:
+    a = SqueakyDescriptor()
+```
+
+</div>
+
+<div style="font-size: 1.00em;">
+
+```python
+$ python3.14 -i demo.py
+>>> z = Demo()
+>>> z.__dict__
+{}
+>>> z.a
+Squeak! Get value from obj=<__main__.Demo object at 0x101883380> of type objtype=<class '__main__.Demo'>
+'Default'
+>>> z.a = "hello"
+Squeak! Set value='hello' on obj=<__main__.Demo object at 0x101883380>
+>>> z.__dict__
+{'_squeaky': 'hello'}
+>>> z.a
+Squeak! Get value from obj=<__main__.Demo object at 0x101883380> of type objtype=<class '__main__.Demo'>
+'hello'
+```
+
+</div>
+
+------
+
+#### Data Descriptor (2)
+
+<div style="display: flex; gap: 20px; font-size: 0.75em;">
+
+```python [1]
+# descriptor.py
+
+class SqueakyDescriptor:
+
+    def __get__(self, obj, objtype=None):
+        print(f"Squeak! Get value from {obj=} of type {objtype=}")
+        if obj:
+            return getattr(obj, "_squeaky", "Default")
+        return getattr(objtype, "_squeaky", "Default")
+  
+    def __set__(self, obj, value):
+        print(f"Squeak! Set {value=} on {obj=}")
+        setattr(obj, "_squeaky", value)
+
+    # def __delete__(self, obj): ...
+```
+
+
+---
+
+```python [1,8]
+# demo.py
+
+from descriptor import SqueakyDescriptor
+
+
+class Demo:
+    a = SqueakyDescriptor()
+    b = SqueakyDescriptor()
+```
+
+</div>
+
+<div style="font-size: 0.95em;">
+
+```python
+$ python3.14 -i demo.py
+>>> z = Demo()
+>>> z.a
+Squeak! Get value from obj=<__main__.Demo object at 0x103c7b380> of type objtype=<class '__main__.Demo'>
+'Default'
+>>> z.a = "hello"
+Squeak! Set value='hello' on obj=<__main__.Demo object at 0x103c7b380>
+>>> z.__dict__
+{'_squeaky': 'hello'}
+>>> z.a
+Squeak! Get value from obj=<__main__.Demo object at 0x103c7b380> of type objtype=<class '__main__.Demo'>
+'hello'
+>>> z.b = 42
+Squeak! Set value=42 on obj=<__main__.Demo object at 0x103c7b380>
+>>> z.a
+Squeak! Get value from obj=<__main__.Demo object at 0x103c7b380> of type objtype=<class '__main__.Demo'>
+42
+>>> z.__dict__
+{'_squeaky': 42}
+```
+
+</div>
+
+------
+
+#### Data Descriptor (3)
+
+<div style="display: flex; gap: 20px; font-size: 0.65em;">
+
+```python [1,5-7,12-13,17]
+# descriptor.py
+
+class SqueakyDescriptor:
+
+    def __set_name__(self, owner, name):
+        print(f"Squeak! Set name {name=} on {owner=}")
+        self.name = f"_{name}"
+
+    def __get__(self, obj, objtype=None):
+        print(f"Squeak! Get value from {obj=} of type {objtype=}")
+        if obj:
+            return getattr(obj, self.name, "Default")
+        return getattr(objtype, self.name, "Default")
+
+    def __set__(self, obj, value):
+        print(f"Squeak! Set {value=} on {obj=}")
+        setattr(obj, self.name, value)
+
+    # def __delete__(self, obj): ...
+```
+
+---
+
+```python [1]
+# demo.py
+
+from descriptor import SqueakyDescriptor
+
+
+class Demo:
+    a = SqueakyDescriptor()
+    b = SqueakyDescriptor()
+```
+
+</div>
+
+<div style="font-size: 0.90em;">
+
+```python
+$ python3.14 -i demo.py
+Squeak! Set name name='a' on owner=<class '__main__.Demo'>
+Squeak! Set name name='b' on owner=<class '__main__.Demo'>
+>>> z = Demo()
+>>> z.a
+Squeak! Get value from obj=<__main__.Demo object at 0x105a9b380> of type objtype=<class '__main__.Demo'>
+'Default'
+>>> z.a = "hello"
+Squeak! Set value='hello' on obj=<__main__.Demo object at 0x105a9b380>
+>>> z.b
+Squeak! Get value from obj=<__main__.Demo object at 0x105a9b380> of type objtype=<class '__main__.Demo'>
+'Default'
+>>> z.b = 42
+Squeak! Set value=42 on obj=<__main__.Demo object at 0x105a9b380>
+>>> z.a
+Squeak! Get value from obj=<__main__.Demo object at 0x105a9b380> of type objtype=<class '__main__.Demo'>
+'hello'
+>>> z.__dict__
+{'_a': 'hello', '_b': 42}
+```
+
+</div>
+
+===
+
+<!-- .slide: class="center" -->
+# Point
+
+===
+
+<!-- .slide: class="center" -->
+# Use Case
+
+## Validation
+
+------
+
+#### Unvalidated Attributes
 
 <div style="display: flex; gap: 20px;">
 
@@ -140,9 +536,11 @@ region.height = -42
 print(region)  # Region(-42, 2, 3)
 ```
 
+</div>
+
 ------
 
-#### Slide Tile 2
+#### Validated Attributes - `@property`
 
 <div style="display: flex; gap: 20px;">
 
@@ -191,13 +589,17 @@ print(region)  # Region(1, 2, 3)
 region.height = -42  # ValueError: Value must be >= 0
 ```
 
+</div>
+
 ------
 
-#### Slide Tile 3
+#### Validated via `@property` - Multiple Classes
 
-<div style="display: flex; gap: 20px;">
+<div style="display: flex; gap: 20px; font-size: 0.94em;">
 
 ```python
+# region.py
+
 class Region:
     def __init__(self, height, width, depth):
         self.height = height
@@ -234,6 +636,8 @@ class Region:
 ---
 
 ```python
+# temperature.py
+
 _ABSOLUTE_ZERO = -273.15
 
 class Temperature:
@@ -251,9 +655,11 @@ class Temperature:
         self._celsius = value
 ```
 
+</div>
+
 ------
 
-#### Slide Tile 4
+#### Descriptor - `ValidatedAttribute`
 
 ```python
 # attribute.py
@@ -268,22 +674,22 @@ class ValidatedAttribute:
     def __set_name__(self, owner, name):
         self.name = f"_{name}"
 
-    def __get__(self, instance, owner):
-        if instance is None:
+    def __get__(self, obj, objtype=None):
+        if obj is None:
             return self
-        return getattr(instance, self.name, None)
+        return getattr(obj, self.name, None)
 
-    def __set__(self, instance, value):
+    def __set__(self, obj, value):
         if self.min_value is not None and value < self.min_value:
             raise ValueError(f"Value must be >= {self.min_value}")
         if self.max_value is not None and value > self.max_value:
             raise ValueError(f"Value must be <= {self.max_value}")
-        setattr(instance, self.name, value)
+        setattr(obj, self.name, value)
 ```
 
 ------
 
-#### Slide Tile 5
+#### Using `ValidatedAttribute`
 
 <div style="display: flex; gap: 20px;">
 

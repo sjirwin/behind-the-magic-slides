@@ -32,29 +32,37 @@
 
 ### Used for the slides (WIP)
 
-- Instroduction
+- Introduction
   - Title
   - About me
   - Why this talk
-- What are descriptors
-  - Protocol: `__get__`, `__set__`, `__delete__`
-  - Data vs non-data
-    - `__set_name__`
-- Attribute lookup - Basic view
+- Descriptors
+  - What is a Descriptor
+  - Descriptor Protocol
+  - Descriptor Types
+  - Descriptors are everywhere
+- Attribute lookup: Basic view
+  - Lookup Order - Simple View
+  - Lookup Order - Expanded View
 - _Live coding_ (limit **15 mins**)
-  - Basic descriptor examples
-    - Simple descriptor
-    - Data vs non-data demo
-  - Case study - ValidatedAttribute
+  - Basic demo
+    - Non-data Descriptor
+    - Data Descriptor
+      - Without `__set_name__`
+      - With `__set_name__`
   - Case study - caching polar coordinates
-- Attribute lookup - Full view
-  - `__getattribute__`, `__getattr__`, `__setattr__`, `__delattr__`
-  - How they interact with descriptors
-- Common and powerful uses of descriptors
-  - Functions (method binding)
-  - classmethod/staticmethod
-  - ORMs, validation, computed attributes
-- Conclusion
+  - Case study - ValidatedAttribute
+- Attribute lookup: Full view
+  - Lookup Order - get
+  - Lookup Order - set
+  - Lookup Order - delete
+  - Key Points
+- Writing Your Own Descriptors
+  - Some Uses for Descriptors
+- Wrapping Up
+  - How It All Connects
+  - Summary
+  - Questions
 
 ### Timing
 

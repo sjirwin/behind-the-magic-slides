@@ -1324,3 +1324,26 @@ class Point:
     def r(self):
         return math.sqrt(self.x**2 + self.y**2)
 ```
+
+## Adding a descriptor to an existing class
+
+```python
+>>> from descriptor import SqueakyDescriptor
+>>> class C:
+...     pass
+...
+>>> c = C()
+>>> c.a
+Traceback (most recent call last):
+  File "<python-input-38>", line 1, in <module>
+    c.a
+AttributeError: 'C' object has no attribute 'a'
+>>> sd = SqueakyDescriptor()
+>>> C.a = sd
+>>> sd.__set_name__(C, 'a')
+Squeak! Set name name='a' on owner=<class '__main__.C'>
+>>> c.a
+Squeak! Get value from obj=<__main__.C object at 0x10a025010> of type objtype=<class '__main__.C'>
+'Default'
+>>> 
+```

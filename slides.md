@@ -237,7 +237,9 @@ For `del obj.attr`
 
 ## Summary
 
-Descriptors are everywhere and are essential to how Python works
+- Descriptors are:
+  - Everywhere
+  - Essential to how Python works
 
 ------
 
@@ -499,6 +501,320 @@ Squeak! Get value from obj=<__main__.Demo object at 0x105a9b380> of type objtype
 
 <!-- .slide: class="center" -->
 # Point
+
+------
+
+#### Point - polar as functions
+
+<div style="display: flex; gap: 20px;">
+
+```python []
+# point.py
+
+import math
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def r(self):
+        print("Computing r ...")
+        return math.sqrt(self.x**2 + self.y**2)
+
+    def theta(self):
+        print("Computing theta ...")
+        return math.atan2(self.y, self.x)
+```
+
+---
+
+```python
+$ python3.14 -i point.py
+>>> p = Point(3, 4)
+>>> p.r()
+Computing r ...
+5.0
+>>> p.r()
+Computing r ...
+5.0
+>>> p.x = 5
+>>> p.r()
+Computing r ...
+6.4031242374328485
+```
+
+</div>
+
+------
+
+#### Point - polar as properties
+
+<div style="display: flex; gap: 20px;">
+
+```python [10-18]
+# point.py
+
+import math
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    @property
+    def r(self):
+        print("Computing r ...")
+        return math.sqrt(self.x**2 + self.y**2)
+
+    @property
+    def theta(self):
+        print("Computing theta ...")
+        return math.atan2(self.y, self.x)
+```
+
+---
+
+```python
+$ python3.14 -i point.py
+>>> p = Point(3, 4)
+>>> p.r
+Computing r ...
+5.0
+>>> p.r
+Computing r ...
+5.0
+>>> p.x = 5
+>>> p.r
+Computing r ...
+6.4031242374328485
+```
+
+</div>
+
+------
+
+#### Point - polar as cached properties
+
+<div style="display: flex; gap: 20px;">
+
+```python [4, 11-19]
+# point.py
+
+import math
+from functools import cached_property
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    @cached_property
+    def r(self):
+        print("Computing r ...")
+        return math.sqrt(self.x**2 + self.y**2)
+
+    @cached_property
+    def theta(self):
+        print("Computing theta ...")
+        return math.atan2(self.y, self.x)
+```
+
+---
+
+```python
+$ python3.14 -i point.py
+>>> p = Point(3, 4)
+>>> p.r
+Computing r ...
+5.0
+>>> p.r
+5.0
+>>> p.x = 5
+>>> p.r
+5.0
+```
+
+</div>
+
+------
+
+#### Point - polar as cached properties (DIY)
+
+<div style="display: flex; gap: 20px;">
+
+```python [4,11,16]
+# point.py
+
+import math
+from descriptor import CachedProperty
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    @CachedProperty
+    def r(self):
+        print("Computing r ...")
+        return math.sqrt(self.x**2 + self.y**2)
+
+    @CachedProperty
+    def theta(self):
+        print("Computing theta ...")
+        return math.atan2(self.y, self.x)
+```
+
+---
+
+```python []
+# descriptor.py
+
+class CachedProperty:
+
+    def __init__(self, compute_func):
+        self.compute_func = compute_func
+
+    def __set_name__(self, owner, name):
+        self.name = f"_cache_{name}"
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        if not hasattr(obj, self.name):
+            setattr(obj, self.name, self.compute_func(obj))
+        return getattr(obj, self.name)
+```
+
+</div>
+
+```python
+$ python3.14 -i point.py
+>>> p = Point(3, 4)
+>>> p.r
+Computing r ...
+5.0
+>>> p.r
+5.0
+>>> p.x = 5
+>>> p.r
+5.0
+```
+
+------
+
+#### Point - polar as invalidating cached properties (1)
+
+<div style="display: flex; gap: 20px; font-size=0.50em">
+
+```python [5, 7, 10-11, 17-29]
+# descriptor.py
+
+class CachedProperty:
+
+    def __init__(self, compute_func, *dependencies):
+        self.compute_func = compute_func
+        self.dependencies = dependencies
+
+    def __set_name__(self, owner, name):
+        self.name = name
+        self.cache_name = f"_cache_{name}"
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+
+        # Check if cache is valid
+        if not hasattr(obj, self.cache_name):
+            # Compute and cache the value
+            print(f"Computing {self.name} ...")
+            value = self.compute_func(obj)
+            setattr(obj, self.cache_name, value)
+
+        return getattr(obj, self.cache_name)
+
+    def invalidate(self, obj):
+        """Remove cached value."""
+        if hasattr(obj, self.cache_name):
+            delattr(obj, self.cache_name)
+```
+
+---
+
+```python []
+# descriptor.py
+
+class InvalidatingAttribute:
+
+    def __init__(self):
+        self.cached_properties = []
+
+    def __set_name__(self, owner, name):
+        self.name = f"_{name}"
+        # Find all CachedProperty descriptors
+        # that depend on this attribute
+        for attr_name in dir(owner):
+            attr = getattr(owner, attr_name, None)
+            if (isinstance(attr, CachedProperty) 
+                and name in attr.dependencies):
+                self.cached_properties.append(attr)
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return getattr(obj, self.name)
+
+    def __set__(self, obj, value):
+        setattr(obj, self.name, value)
+        # Invalidate all dependent cached properties
+        for cached_prop in self.cached_properties:
+            cached_prop.invalidate(obj)
+```
+
+</div>
+
+------
+
+#### Point - polar as invalidating cached properties (2)
+
+<div style="display: flex; gap: 20px; font-size=0.50em">
+
+```python [4, 7-12]
+# point.py
+
+import math
+from descriptor import CachedProperty, InvalidatingAttribute
+
+class Point:
+    x = InvalidatingAttribute()
+    y = InvalidatingAttribute()
+
+    # Cached polar coordinates
+    r = CachedProperty(lambda self: math.sqrt(self.x**2 + self.y**2), "x", "y")
+    theta = CachedProperty(lambda self: math.atan2(self.y, self.x), "x", "y")
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+```
+
+---
+
+```python
+$ python3.14 -i point.py
+>>> p = Point(3, 4)
+>>> p.r
+Computing r ...
+5.0
+>>> p.r
+5.0
+>>> p.x = 5
+>>> p.r
+Computing r ...
+6.4031242374328485
+```
+
+</div>
 
 ===
 

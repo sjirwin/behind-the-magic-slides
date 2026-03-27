@@ -554,7 +554,7 @@ Computing r ...
 
 <div style="display: flex; gap: 20px;">
 
-```python [10-18]
+```python [10,15]
 # point.py
 
 import math
@@ -600,7 +600,7 @@ Computing r ...
 
 <div style="display: flex; gap: 20px;">
 
-```python [4, 11-19]
+```python [4,11,16]
 # point.py
 
 import math
@@ -709,7 +709,7 @@ Computing r ...
 
 <div style="display: flex; gap: 20px; font-size=0.50em">
 
-```python [5, 7, 10-11, 17-29]
+```python [5, 7, 10-11, 17, 21-23]
 # cached.py
 
 class CachedProperty:
@@ -725,18 +725,12 @@ class CachedProperty:
     def __get__(self, obj, objtype=None):
         if obj is None:
             return self
-
-        # Check if cache is valid
         if not hasattr(obj, self.cache_name):
-            # Compute and cache the value
             print(f"Computing {self.name} ...")
-            value = self.compute_func(obj)
-            setattr(obj, self.cache_name, value)
-
+            setattr(obj, self.cache_name, self.compute_func(obj))
         return getattr(obj, self.cache_name)
 
     def invalidate(self, obj):
-        """Remove cached value."""
         if hasattr(obj, self.cache_name):
             delattr(obj, self.cache_name)
 ```

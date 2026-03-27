@@ -171,6 +171,7 @@ For `obj.attr = value`
 <br/>&nbsp;&#8595; (inside `__setattr__`)
 1. Data descriptor from `type(obj).__mro__`
 1. `obj.__dict__['attr'] = value`
+1. Raise `AttributeError` (no `__dict__`)
 
 ------
 
@@ -182,6 +183,7 @@ For `del obj.attr`
 <br/>&nbsp;&#8595; (inside `__delattr__`)
 1. Data descriptor from `type(obj).__mro__`
 1. `del obj.__dict__['attr']`
+1. Raise `AttributeError`
 
 ------
 

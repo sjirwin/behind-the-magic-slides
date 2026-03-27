@@ -265,7 +265,7 @@ For `del obj.attr`
 <div style="display: flex; gap: 20px;">
 
 ```python
-# descriptor.py
+# squeak.py
 
 class SqueakyDescriptor:
 
@@ -281,7 +281,7 @@ class SqueakyDescriptor:
 ```python
 # demo.py
 
-from descriptor import SqueakyDescriptor
+from squeak import SqueakyDescriptor
 
 
 class Demo:
@@ -312,7 +312,7 @@ Squeak! Get value from obj=<__main__.Demo object at 0x101c93380> of type objtype
 <div style="display: flex; gap: 20px; font-size: 0.85em;">
 
 ```python [1,11-13]
-# descriptor.py
+# squeak.py
 
 class SqueakyDescriptor:
 
@@ -334,7 +334,7 @@ class SqueakyDescriptor:
 ```python [1]
 # demo.py
 
-from descriptor import SqueakyDescriptor
+from squeak import SqueakyDescriptor
 
 
 class Demo:
@@ -371,7 +371,7 @@ Squeak! Get value from obj=<__main__.Demo object at 0x101883380> of type objtype
 <div style="display: flex; gap: 20px; font-size: 0.75em;">
 
 ```python [1]
-# descriptor.py
+# squeak.py
 
 class SqueakyDescriptor:
 
@@ -394,7 +394,7 @@ class SqueakyDescriptor:
 ```python [1,8]
 # demo.py
 
-from descriptor import SqueakyDescriptor
+from squeak import SqueakyDescriptor
 
 
 class Demo:
@@ -437,7 +437,7 @@ Squeak! Get value from obj=<__main__.Demo object at 0x103c7b380> of type objtype
 <div style="display: flex; gap: 20px; font-size: 0.65em;">
 
 ```python [1,5-7,12-13,17]
-# descriptor.py
+# squeak.py
 
 class SqueakyDescriptor:
 
@@ -463,7 +463,7 @@ class SqueakyDescriptor:
 ```python [1]
 # demo.py
 
-from descriptor import SqueakyDescriptor
+from squeak import SqueakyDescriptor
 
 
 class Demo:
@@ -649,7 +649,7 @@ Computing r ...
 # point.py
 
 import math
-from descriptor import CachedProperty
+from cached import CachedProperty
 
 class Point:
     def __init__(self, x, y):
@@ -670,7 +670,7 @@ class Point:
 ---
 
 ```python []
-# descriptor.py
+# cached.py
 
 class CachedProperty:
 
@@ -710,7 +710,7 @@ Computing r ...
 <div style="display: flex; gap: 20px; font-size=0.50em">
 
 ```python [5, 7, 10-11, 17-29]
-# descriptor.py
+# cached.py
 
 class CachedProperty:
 
@@ -744,7 +744,7 @@ class CachedProperty:
 ---
 
 ```python []
-# descriptor.py
+# cached.py
 
 class InvalidatingAttribute:
 
@@ -785,7 +785,7 @@ class InvalidatingAttribute:
 # point.py
 
 import math
-from descriptor import CachedProperty, InvalidatingAttribute
+from cached import CachedProperty, InvalidatingAttribute
 
 class Point:
     x = InvalidatingAttribute()

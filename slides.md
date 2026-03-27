@@ -321,7 +321,7 @@ class SqueakyDescriptor:
         if obj:
             return getattr(obj, "_squeaky", "Default")
         return getattr(objtype, "_squeaky", "Default")
-  
+
     def __set__(self, obj, value):
         print(f"Squeak! Set {value=} on {obj=}")
         setattr(obj, "_squeaky", value)
@@ -380,7 +380,7 @@ class SqueakyDescriptor:
         if obj:
             return getattr(obj, "_squeaky", "Default")
         return getattr(objtype, "_squeaky", "Default")
-  
+
     def __set__(self, obj, value):
         print(f"Squeak! Set {value=} on {obj=}")
         setattr(obj, "_squeaky", value)
@@ -678,14 +678,14 @@ class CachedProperty:
         self.compute_func = compute_func
 
     def __set_name__(self, owner, name):
-        self.name = f"_cache_{name}"
+        self.cached_name = f"_cache_{name}"
 
     def __get__(self, obj, objtype=None):
         if obj is None:
             return self
-        if not hasattr(obj, self.name):
-            setattr(obj, self.name, self.compute_func(obj))
-        return getattr(obj, self.name)
+        if not hasattr(obj, self.cached_name):
+            setattr(obj, self.cached_name, self.compute_func(obj))
+        return getattr(obj, self.cached_name)
 ```
 
 </div>
@@ -709,7 +709,7 @@ Computing r ...
 
 <div style="display: flex; gap: 20px; font-size=0.50em">
 
-```python [5, 7, 10-11, 17, 21-23]
+```python [5, 7, 19-21]
 # cached.py
 
 class CachedProperty:
@@ -719,14 +719,12 @@ class CachedProperty:
         self.dependencies = dependencies
 
     def __set_name__(self, owner, name):
-        self.name = name
         self.cache_name = f"_cache_{name}"
 
     def __get__(self, obj, objtype=None):
         if obj is None:
             return self
         if not hasattr(obj, self.cache_name):
-            print(f"Computing {self.name} ...")
             setattr(obj, self.cache_name, self.compute_func(obj))
         return getattr(obj, self.cache_name)
 
@@ -735,10 +733,8 @@ class CachedProperty:
             delattr(obj, self.cache_name)
 ```
 
----
+```python [23:]
 
-```python []
-# cached.py
 
 class InvalidatingAttribute:
 
@@ -751,7 +747,7 @@ class InvalidatingAttribute:
         # that depend on this attribute
         for attr_name in dir(owner):
             attr = getattr(owner, attr_name, None)
-            if (isinstance(attr, CachedProperty) 
+            if (isinstance(attr, CachedProperty)
                 and name in attr.dependencies):
                 self.cached_properties.append(attr)
 
@@ -775,7 +771,7 @@ class InvalidatingAttribute:
 
 <div style="display: flex; gap: 20px; font-size=0.50em">
 
-```python [4, 7-12]
+```python [4, 7-12, 18, 22]
 # point.py
 
 import math
@@ -786,12 +782,20 @@ class Point:
     y = InvalidatingAttribute()
 
     # Cached polar coordinates
-    r = CachedProperty(lambda self: math.sqrt(self.x**2 + self.y**2), "x", "y")
-    theta = CachedProperty(lambda self: math.atan2(self.y, self.x), "x", "y")
+    r = CachedProperty(lambda self: self._r(), "x", "y")
+    theta = CachedProperty(lambda self: self._theta(), "x", "y")
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def _r(self):
+        print("Computing r ...")
+        return math.sqrt(self.x**2 + self.y**2)
+
+    def _theta(self):
+        print("Computing theta ...")
+        return math.atan2(self.y, self.x)
 ```
 
 ---

@@ -26,6 +26,10 @@
   /* background-color: rgba(0, 0, 0, 0.95); */
 }
 
+.reveal .hljs.has-highlights tr:not(.highlight-line) {
+  opacity: 0.2;
+}
+
 /*********************************************
  * SLIDE LAYOUT
  *********************************************/

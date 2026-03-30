@@ -290,7 +290,7 @@ class Demo:
 
 </div>
 
-```python
+```python-repl
 $ python3.14 -i demo.py
 >>> z = Demo()
 >>> z.__dict__
@@ -345,7 +345,7 @@ class Demo:
 
 <div style="font-size: 1.00em;">
 
-```python
+```python-repl
 $ python3.14 -i demo.py
 >>> z = Demo()
 >>> z.__dict__
@@ -406,7 +406,7 @@ class Demo:
 
 <div style="font-size: 0.95em;">
 
-```python
+```python-repl
 $ python3.14 -i demo.py
 >>> z = Demo()
 >>> z.a
@@ -475,7 +475,7 @@ class Demo:
 
 <div style="font-size: 0.90em;">
 
-```python
+```python-repl
 $ python3.14 -i demo.py
 Squeak! Set name name='a' on owner=<class '__main__.Demo'>
 Squeak! Set name name='b' on owner=<class '__main__.Demo'>
@@ -577,7 +577,7 @@ class Point:
 
 ---
 
-```python
+```python-repl
 $ python3.14 -i point.py
 >>> p = Point(3, 4)
 >>> p.r
@@ -624,7 +624,7 @@ class Point:
 
 ---
 
-```python
+```python-repl
 $ python3.14 -i point.py
 >>> p = Point(3, 4)
 >>> p.r
@@ -690,7 +690,7 @@ class CachedProperty:
 
 </div>
 
-```python
+```python-repl
 $ python3.14 -i point.py
 >>> p = Point(3, 4)
 >>> p.r
@@ -800,7 +800,7 @@ class Point:
 
 ---
 
-```python
+```python-repl
 $ python3.14 -i point.py
 >>> p = Point(3, 4)
 >>> p.r

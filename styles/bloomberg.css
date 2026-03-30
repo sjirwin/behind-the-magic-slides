@@ -23,7 +23,7 @@
 
 .reveal pre code {
   max-height: 900px;
-  background-color: rgba(0, 0, 0, 0.95);
+  /* background-color: rgba(0, 0, 0, 0.95); */
 }
 
 /*********************************************

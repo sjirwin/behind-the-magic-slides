@@ -91,7 +91,7 @@
 - `@classmethod`
 - `@staticmethod`
 - Methods on built-in types
-  - E.g., `list.append`, `dict.items`
+  - e.g., `list.append`, `dict.items`
 - `super()`
 
 </div>
